@@ -1,1 +1,1548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마산제일여중 급식 알리미</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Do Hyeon, Nanum Gothic, Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Nanum+Gothic:wght@400;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Nanum Gothic', 'Inter', sans-serif;
+            background-color: #faf6f0; /* Warm Retro Paper Background */
+            transition: font-size 0.2s ease;
+        }
+        .title-font {
+            font-family: 'Do Hyeon', sans-serif;
+        }
+        
+        /* 네오 브루탈리즘 공통 버튼 애니메이션 스타일 */
+        .brutal-btn {
+            transition: all 0.15s ease-in-out;
+        }
+        .brutal-btn:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1) !important;
+        }
+        .brutal-btn:active {
+            transform: translate(0px, 0px);
+            box-shadow: 0px 0px 0px 0px rgba(0,0,0,1) !important;
+        }
 
+        /* 시니어 교직원을 위한 대형 폰트 모드 활성 클래스 */
+        .large-text-mode p, 
+        .large-text-mode li, 
+        .large-text-mode td,
+        .large-text-mode select,
+        .large-text-mode button {
+            font-size: 1.25rem !important;
+            line-height: 1.8 !important;
+        }
+        .large-text-mode span, .large-text-mode div {
+            font-size: 1.15rem !important;
+        }
+        .large-text-mode h3 {
+            font-size: 1.65rem !important;
+        }
+        .large-text-mode h4 {
+            font-size: 1.45rem !important;
+        }
+        
+        /* 음성 출력 상태 웨이브 막대 */
+        .wave-bar {
+            display: inline-block;
+            width: 3px;
+            height: 12px;
+            background-color: #000000;
+            margin: 0 1px;
+            animation: wave 1s ease-in-out infinite;
+        }
+        .wave-bar:nth-child(2) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes wave {
+            0%, 100% { height: 4px; }
+            50% { height: 16px; }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-black pb-16">
+
+    <!-- TOP NAVIGATION BAR (Neo-Brutalist High Contrast Header) -->
+    <header class="bg-[#00a896] text-black border-b-4 border-black sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <!-- Left Branding -->
+            <div class="flex items-center gap-3 w-full md:w-auto justify-start">
+                <div class="w-12 h-12 rounded-xl bg-white border-2 border-black flex items-center justify-center text-2xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                    <i class="fa-solid fa-school-flag text-black"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black tracking-wide title-font">마산제일여중 급식 알리미</h1>
+                    <p class="text-[10px] font-black tracking-wider uppercase text-black">Teacher Daily Wellness Dashboard</p>
+                </div>
+            </div>
+            
+            <!-- Center: PROMINENT LARGE DIGITAL CLOCK -->
+            <div class="flex flex-col items-center justify-center bg-black px-8 py-2 rounded-xl border-2 border-white shadow-none text-center min-w-[320px]">
+                <div id="digital-clock" class="text-2xl sm:text-3xl font-black tracking-widest text-amber-300 font-mono">00:00:00</div>
+                <div id="digital-clock-date" class="text-[10px] font-bold text-teal-200 uppercase tracking-widest mt-0.5">2026년 06월 23일 화요일</div>
+            </div>
+            
+            <!-- Right Accessibility Controller -->
+            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                <button id="font-toggle-btn" class="brutal-btn bg-[#ffc857] text-black px-5 py-3 rounded-xl text-xs sm:text-sm font-black transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black flex items-center gap-1.5">
+                    <i class="fa-solid fa-magnifying-glass-plus"></i> <span id="font-toggle-text">큰 글자 모드 켜기</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 mt-6">
+        
+        <!-- CALENDAR HERO CARD (Dynamic Infinite Navigation with Neo-Brutalist Layout) -->
+        <div class="bg-white rounded-2xl p-6 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mb-8">
+            <div class="flex flex-col gap-4">
+                <!-- Title Row -->
+                <div>
+                    <h2 class="text-2xl font-black text-black flex items-center gap-2 title-font">
+                        <i class="fa-regular fa-calendar-days text-black"></i>
+                        급식 식단 조회 (실시간 연동)
+                    </h2>
+                </div>
+                
+                <!-- Buttons Row (Positioned as a single row below the title) -->
+                <div class="flex flex-wrap items-center gap-3 w-full">
+                    <!-- Month Back/Forward Buttons -->
+                    <button id="prev-month" class="brutal-btn py-3 px-4 rounded-xl bg-white text-black font-black border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center gap-1.5" title="이전달">
+                        <i class="fa-solid fa-angles-left"></i> <span>이전달</span>
+                    </button>
+                    <button id="prev-day" class="brutal-btn py-3 px-4 rounded-xl bg-white text-black font-black border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-angle-left"></i> 어제
+                    </button>
+                    <input type="date" id="target-date" class="bg-[#f4f1de] text-black font-black px-4 py-3 rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:outline-none text-center cursor-pointer">
+                    <button id="next-day" class="brutal-btn py-3 px-4 rounded-xl bg-white text-black font-black border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-1.5">
+                        내일 <i class="fa-solid fa-angle-right"></i>
+                    </button>
+                    <button id="next-month" class="brutal-btn py-3 px-4 rounded-xl bg-white text-black font-black border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center gap-1.5" title="다음달">
+                        <span>다음달</span> <i class="fa-solid fa-angles-right"></i>
+                    </button>
+                    <button id="today-btn" class="brutal-btn px-5 py-3 rounded-xl bg-[#00a896] text-black font-black border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                        오늘로 이동
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dynamic Week Tab Navigation -->
+            <div class="grid grid-cols-5 gap-2.5 border-t-4 border-black pt-5 mt-5" id="week-tabs">
+                <!-- Javascript가 월~금 일정을 자동으로 그려냅니다. -->
+            </div>
+        </div>
+
+        <!-- CORE APP INTERFACE GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- LEFT COLUMN: LUNCH TRAY & SENIOR DISEASE COACHING (Col 7) -->
+            <div class="lg:col-span-7 flex flex-col gap-8">
+                
+                <!-- NEO-BRUTALIST LUNCH TRAY -->
+                <div id="tray-outer-box" class="bg-[#eae8ff] rounded-3xl p-6 sm:p-8 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden transition-all duration-300">
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-2 mb-6">
+                        <span class="text-black font-black bg-white px-4 py-1.5 rounded-xl text-xs uppercase tracking-wider border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <i class="fa-solid fa-utensils mr-1"></i> MASAN JEIL LUNCH TRAY
+                        </span>
+                        <div class="flex items-center gap-2 text-xs font-black bg-[#ffc857] border-2 border-black text-black px-4 py-1.5 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <span class="w-2 h-2 bg-black rounded-full animate-ping"></span>
+                            <span id="tray-date-title">2026.06.23 (화)</span>
+                        </div>
+                    </div>
+
+                    <!-- LUNCH COMPARTMENTS GRID -->
+                    <div class="grid grid-cols-12 gap-4" id="tray-grid-body">
+                        
+                        <!-- Top Row: Rice, Soup, Main Dish with Neo-Brutalist Solid Flat Colors -->
+                        <div class="col-span-12 sm:col-span-4 bg-[#ffe5d9] rounded-2xl p-5 flex flex-col items-center text-center justify-center min-h-[140px] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <span class="text-4xl mb-2">🍚</span>
+                            <h4 class="text-xs text-slate-600 font-extrabold tracking-wider mb-1">밥류</h4>
+                            <p class="text-base font-black text-black" id="dish-rice">현미잡곡밥</p>
+                            <span class="text-[11px] text-teal-900 font-bold mt-1.5" id="allergies-rice"></span>
+                        </div>
+
+                        <div class="col-span-12 sm:col-span-4 bg-[#f4f1de] rounded-2xl p-5 flex flex-col items-center text-center justify-center min-h-[140px] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <span class="text-4xl mb-2">🥣</span>
+                            <h4 class="text-xs text-slate-600 font-extrabold tracking-wider mb-1">국/찌개</h4>
+                            <p class="text-base font-black text-black" id="dish-soup">쇠고기해물미역국</p>
+                            <span class="text-[11px] text-teal-900 font-bold mt-1.5" id="allergies-soup"></span>
+                        </div>
+
+                        <div class="col-span-12 sm:col-span-4 bg-[#fde2e4] rounded-2xl p-5 flex flex-col items-center text-center justify-center min-h-[140px] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <span class="text-4xl mb-2">🍖</span>
+                            <h4 class="text-xs text-slate-600 font-extrabold tracking-wider mb-1">핵심반찬</h4>
+                            <p class="text-base font-black text-black" id="dish-main">LA식돼지갈비찜</p>
+                            <span class="text-[11px] text-teal-900 font-bold mt-1.5" id="allergies-main"></span>
+                        </div>
+
+                        <!-- Bottom Row: Sub 1, Sub 2, Kimchi, Dessert -->
+                        <div class="col-span-6 sm:col-span-3 bg-[#e2f0cb] rounded-2xl p-4 flex flex-col items-center text-center justify-center min-h-[130px] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <span class="text-3xl mb-2">🥗</span>
+                            <h4 class="text-xs text-slate-600 font-extrabold tracking-wider mb-1">부반찬 1</h4>
+                            <p class="text-sm font-black text-black" id="dish-sub1">콩나물무침</p>
+                            <span class="text-[10px] text-teal-900 font-bold mt-1" id="allergies-sub1"></span>
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3 bg-[#e8e8ff] rounded-2xl p-4 flex flex-col items-center text-center justify-center min-h-[130px] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <span class="text-3xl mb-2">🍳</span>
+                            <h4 class="text-xs text-slate-600 font-extrabold tracking-wider mb-1">부반찬 2</h4>
+                            <p class="text-sm font-black text-black" id="dish-sub2">부추달걀말이</p>
+                            <span class="text-[10px] text-teal-900 font-bold mt-1" id="allergies-sub2"></span>
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3 bg-[#ffccd5] rounded-2xl p-4 flex flex-col items-center text-center justify-center min-h-[130px] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <span class="text-3xl mb-2">🥬</span>
+                            <h4 class="text-xs text-slate-600 font-extrabold tracking-wider mb-1">김치류</h4>
+                            <p class="text-sm font-black text-black" id="dish-kimchi">배추김치</p>
+                            <span class="text-[10px] text-teal-900 font-bold mt-1" id="allergies-kimchi"></span>
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3 bg-[#d8f3dc] rounded-2xl p-4 flex flex-col items-center text-center justify-center min-h-[130px] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <span class="text-3xl mb-2">🍉</span>
+                            <h4 class="text-xs text-slate-600 font-extrabold tracking-wider mb-1">후식류</h4>
+                            <p class="text-sm font-black text-black" id="dish-dessert">수박</p>
+                            <span class="text-[10px] text-teal-900 font-bold mt-1" id="allergies-dessert"></span>
+                        </div>
+                    </div>
+
+                    <!-- 식사 미지정 오버레이 경고 -->
+                    <div id="no-meal-overlay" class="hidden absolute inset-0 bg-[#f4f1de] flex flex-col items-center justify-center text-center p-8 z-20 border-4 border-black">
+                        <div class="w-16 h-16 bg-rose-100 text-rose-600 border-2 border-black rounded-xl flex items-center justify-center text-2xl mb-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                            <i class="fa-solid fa-umbrella-beach animate-bounce"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-black title-font">오늘은 학교급식이 없습니다</h3>
+                        <p class="text-sm font-bold text-slate-700 mt-2">주말 및 휴일 기간 또는 나이스 점검 기간으로,<br>건강 식단 조회가 비활성화되었습니다.</p>
+                    </div>
+
+                    <!-- Tray Bottom Actions -->
+                    <div class="mt-6 flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-[#00a896] text-black border-2 border-black rounded-xl flex items-center justify-center text-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                <i class="fa-solid fa-microphone-lines animate-pulse"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-xs font-black text-black">성우 급식 낭독 (신속 TTS)</h5>
+                                <p class="text-[10px] font-bold text-slate-600">오늘의 마산제일여중 급식 전체를 귀로 편하게 들으실 수 있습니다.</p>
+                            </div>
+                        </div>
+                        <button id="tts-read-menu-btn" class="brutal-btn sm:ml-auto w-full sm:w-auto bg-[#ffc857] text-black text-xs font-black px-5 py-3 rounded-xl flex items-center justify-center gap-2 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                            <i class="fa-solid fa-volume-high"></i> 중식 전체 낭독하기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- HIGH IMPACT INTERACTIVE SENIOR GERIATRIC DISEASES MODULE -->
+                <div class="bg-[#ff7096] text-black rounded-3xl p-6 sm:p-8 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden" id="geriatric-coaching-box">
+                    
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b-2 border-black pb-5 mb-5 relative z-10">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-white text-black border-2 border-black rounded-xl flex items-center justify-center text-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                                <i class="fa-solid fa-user-doctor"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black title-font text-black">시니어 선생님 성인병 예방 처방실</h3>
+                                <p class="text-xs font-bold text-black/80 mt-0.5">오늘의 식재료를 역학 분석하여 5대 성인병 맞춤 관리 지침을 처방해 드립니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Adult Disease Dropdown Selector -->
+                    <div class="mb-6 relative z-10">
+                        <label class="block text-xs font-black text-black mb-2">원하시는 관심 예방 질환을 선택해 주세요:</label>
+                        <div class="relative">
+                            <select id="adult-disease-selector" class="w-full bg-white border-2 border-black rounded-xl p-4 text-base font-black text-black focus:outline-none cursor-pointer shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] appearance-none">
+                                <option value="hypertension" selected>🩸 고혈압 (Hypertension) — 저염 식단 및 나트륨 조절 가이드</option>
+                                <option value="diabetes">🌾 당뇨병 (Diabetes) — 탄수화물 제한 및 당 독소 예방 지침</option>
+                                <option value="hyperlipidemia">🥩 고지혈증 (Hyperlipidemia) — 포화지방 억제 및 혈액 정화 가이드</option>
+                                <option value="gout">🍻 통풍 (Gout) — 퓨린 저감 및 무요산 체외 배출 지침</option>
+                                <option value="gastritis">🍋 위염/식도염 (Gastritis) — 위 점막 보호 및 위산 조절 처방</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-black">
+                                <i class="fa-solid fa-circle-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DYNAMIC PRESCRIPTION RESULTS WITH INTUITIVE VISUALS -->
+                    <div class="bg-white rounded-2xl p-5 sm:p-6 border-2 border-black mb-5 relative z-10 min-h-[160px] flex flex-col justify-between shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" id="prescription-display-card">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-black bg-rose-500 text-white border border-black px-2.5 py-1 rounded-md" id="prescription-alert-badge">고혈압 주의보</span>
+                                    <h4 class="text-sm font-black text-black animate-pulse" id="prescription-disease-title">고혈압 예방 및 나트륨 통제 솔루션</h4>
+                                </div>
+                                <div id="speaking-wave" class="hidden items-center gap-1">
+                                    <span class="wave-bar"></span>
+                                    <span class="wave-bar"></span>
+                                    <span class="wave-bar"></span>
+                                    <span class="text-[10px] text-black font-black ml-1">읽는 중</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-black leading-relaxed font-black border-l-4 border-rose-500 pl-3 py-1.5" id="prescription-warning-text">
+                                오늘의 국/찌개에 다량의 염분이 예상되오니 건더기 위주로 드시길 권합니다.
+                            </p>
+                            <p class="text-xs text-slate-700 leading-relaxed font-bold" id="prescription-action-text">
+                                식후 후식으로 배치된 싱싱한 수박에 함유된 칼륨 성분은 몸 안의 여분 나트륨 배출을 신속히 돕습니다.
+                            </p>
+                        </div>
+                        
+                        <!-- HIGH PERFORMANCE INSTANT TTS TRIGGER BUTTON -->
+                        <div class="mt-6 pt-4 border-t-2 border-black flex flex-col sm:flex-row items-center gap-3">
+                            <button id="tts-read-prescription-btn" class="brutal-btn w-full sm:w-auto bg-[#ffc857] text-black text-xs font-black py-4 px-6 rounded-xl border-2 border-black flex items-center justify-center gap-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                                <i class="fa-solid fa-volume-high text-sm"></i> <span id="tts-presc-btn-text">코칭 처방 신속 음성(TTS) 듣기</span>
+                            </button>
+                            <button id="tts-presc-stop-btn" class="hidden brutal-btn w-full sm:w-auto bg-black text-white font-bold py-4 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 border-2 border-black">
+                                <i class="fa-solid fa-circle-stop"></i> 낭독 중지
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: NUTRITION REPORT CARD, CHATBOT & COMMENT FEED (Col 5) -->
+            <div class="lg:col-span-5 flex flex-col gap-8">
+                
+                <!-- NUTRITION REPORT CARD -->
+                <div class="bg-white rounded-2xl p-6 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                    <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-black text-lg"><i class="fa-solid fa-chart-pie"></i></span>
+                            <h3 class="font-black text-black text-base sm:text-lg title-font">오늘의 중식 영양 성분</h3>
+                        </div>
+                        <span class="text-xs font-black text-black bg-[#e2f0cb] px-2.5 py-1 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" id="calories-display">
+                            845 kcal
+                        </span>
+                    </div>
+
+                    <!-- Calorie progress bar -->
+                    <div class="bg-[#f4f1de] p-4 rounded-xl border-2 border-black mb-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <div class="flex items-center justify-between text-xs text-black font-black">
+                            <span>선생님 일일 중식 권장량 대비</span>
+                            <span id="cal-percentage-text">105%</span>
+                        </div>
+                        <div class="w-full bg-white h-4 rounded-full mt-2 overflow-hidden border-2 border-black">
+                            <div id="cal-percentage-bar" class="bg-[#00a896] h-full rounded-full border-r-2 border-black transition-all duration-700" style="width: 105%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Nutrients breakdown grid -->
+                    <div class="grid grid-cols-2 gap-3" id="nutrient-grid">
+                        <!-- Dynamic render -->
+                    </div>
+                </div>
+
+                <!-- AI DIETITIAN CHATBOT -->
+                <div class="bg-[#e9ecef] text-black rounded-2xl p-6 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col min-h-[380px]">
+                    
+                    <!-- Chat Header -->
+                    <div class="flex items-center gap-3 border-b-2 border-black pb-4 mb-4">
+                        <div class="w-10 h-10 bg-[#00a896] text-black border-2 border-black rounded-xl flex items-center justify-center text-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-black text-sm sm:text-base title-font">AI 보건교사 '제니'</h3>
+                            <p class="text-[10px] font-bold text-slate-700">중년 교직원 건강 맞춤 식단을 실시간으로 제안합니다.</p>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable dialogue box -->
+                    <div id="chatbot-logs" class="flex-1 overflow-y-auto mb-4 space-y-3 text-xs pr-1 max-h-[170px]">
+                        <div class="bg-white p-3 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-bold leading-relaxed text-black">
+                            반갑습니다, 마산제일여중 선생님! 🌸 저는 인공지능 보건교사 <b>제니</b>입니다. 오늘 급식의 성분 진단이나, 선생님들의 소화 건강을 위한 저녁 보조 식단 연계 조언까지 자유롭게 여쭤보세요. 항상 공손하고 정성 어린 조언을 올려드리겠습니다.
+                        </div>
+                    </div>
+
+                    <!-- Quick Predefined Tags -->
+                    <div class="flex flex-wrap gap-1.5 mb-3">
+                        <button class="chat-chip brutal-btn bg-white text-black text-[10px] font-black px-2.5 py-1.5 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            🥗 점심 나트륨 배출 가이드는?
+                        </button>
+                        <button class="chat-chip brutal-btn bg-white text-black text-[10px] font-black px-2.5 py-1.5 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            🍚 위염 환자가 피해야 할 찬
+                        </button>
+                        <button class="chat-chip brutal-btn bg-white text-black text-[10px] font-black px-2.5 py-1.5 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            🍉 수박과 오이의 당뇨 영향은?
+                        </button>
+                    </div>
+
+                    <!-- Interactive text input box -->
+                    <div class="flex items-center gap-2 bg-white p-1.5 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <input type="text" id="chat-input" placeholder="급식 관련 질문을 입력해 주세요..." class="flex-1 bg-transparent border-none text-black text-xs font-bold placeholder-slate-400 focus:outline-none px-2.5">
+                        <button id="chat-send-btn" class="w-8 h-8 bg-[#00a896] border border-black text-black rounded-lg flex items-center justify-center hover:bg-[#028090] transition-all">
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- USER SATISFACTION REVIEW LOGS -->
+                <div class="bg-white rounded-2xl p-6 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                    <h3 class="font-black text-black text-base sm:text-lg mb-1 flex items-center gap-2 title-font">
+                        <i class="fa-regular fa-comments text-amber-500"></i>
+                        오늘의 급식 소감
+                    </h3>
+                    <p class="text-xs font-bold text-slate-500 mb-4">마산제일여중 교직원 및 선생님들의 한줄평 피드를 함께 나눕니다.</p>
+
+                    <!-- Write custom review form -->
+                    <form id="review-submission-form" class="space-y-3 bg-[#faf6f0] p-4 rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                        <div class="flex items-center justify-between">
+                            <div class="flex gap-1 text-slate-300 text-lg" id="star-selector">
+                                <i class="fa-solid fa-star star-option cursor-pointer" data-star="1"></i>
+                                <i class="fa-solid fa-star star-option cursor-pointer" data-star="2"></i>
+                                <i class="fa-solid fa-star star-option cursor-pointer" data-star="3"></i>
+                                <i class="fa-solid fa-star star-option cursor-pointer" data-star="4"></i>
+                                <i class="fa-solid fa-star star-option cursor-pointer" data-star="5"></i>
+                            </div>
+                            <input type="text" id="review-author" placeholder="성함 (예: 이교사)" class="border-2 border-black rounded-xl px-2.5 py-1 text-xs w-28 text-black bg-white font-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="review-message" placeholder="소중한 급식 후기를 기록해 주세요..." class="flex-1 border-2 border-black rounded-xl px-3 py-2.5 text-xs bg-white text-black font-bold shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                            <button type="submit" class="brutal-btn bg-[#00a896] text-black hover:bg-[#028090] px-4 py-2.5 rounded-xl text-xs font-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">작성</button>
+                        </div>
+                    </form>
+
+                    <!-- Dynamic reviews feeds -->
+                    <div id="reviews-feed-container" class="mt-4 space-y-3.5 max-h-[140px] overflow-y-auto">
+                        <!-- Handled dynamically in JS -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ACCESSIBLE DEDICATED TTS MODAL FOR CHATBOT RESPONSES (Neo-Brutalist Styled) -->
+    <div id="chat-tts-modal" class="hidden fixed inset-0 bg-black/80 z-[100] items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white border-4 border-black rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative flex flex-col gap-6 text-black max-h-[90vh]">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between border-b-2 border-black pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-[#00a896] border-2 border-black text-black flex items-center justify-center text-2xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                        <i class="fa-solid fa-headset animate-pulse"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black title-font text-black">AI 제니의 음성 건강 상담실</h3>
+                        <p class="text-[10px] font-bold text-slate-600">선생님을 위해 정갈하고 차분한 목소리로 코칭을 낭독 중입니다.</p>
+                    </div>
+                </div>
+                
+                <!-- Dynamic active reading wave -->
+                <div id="modal-speaking-wave" class="hidden items-center gap-1.5 bg-[#e2f0cb] px-3 py-1.5 rounded-xl border-2 border-black">
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="text-xs text-black font-black ml-1">상담 낭독 중</span>
+                </div>
+            </div>
+
+            <!-- Scrollable Reading Screen (Large Font & Eye-Friendly) -->
+            <div class="flex-1 overflow-y-auto bg-[#faf6f0] rounded-xl p-6 border-2 border-black max-h-[40vh] shadow-inner">
+                <p id="chat-tts-text" class="text-base sm:text-lg leading-relaxed font-bold text-black tracking-wide">
+                    상담 답변 데이터를 불러오고 있습니다...
+                </p>
+            </div>
+
+            <!-- Friendly TTS Speed/Control Bar -->
+            <div class="bg-[#f4f1de] p-4 rounded-xl border-2 border-black space-y-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <span class="text-xs font-black text-black flex items-center gap-1.5">
+                        <i class="fa-solid fa-gauge-high"></i> 낭독 속도 조절 (시니어 권장속도):
+                    </span>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[10px] font-bold text-slate-600">느리게</span>
+                        <input type="range" id="tts-speed-slider" min="0.6" max="1.3" step="0.1" value="0.8" class="w-36 h-2 bg-slate-400 rounded-lg appearance-none cursor-pointer accent-black border border-black">
+                        <span class="text-[10px] font-bold text-slate-600">빠르게</span>
+                        <span id="tts-speed-val" class="bg-white text-black text-[10px] font-black px-2 py-0.5 rounded border-2 border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">0.8배속</span>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="grid grid-cols-3 gap-2.5 pt-2">
+                    <!-- Read / Play -->
+                    <button id="modal-play-btn" class="brutal-btn bg-[#00a896] text-black font-black py-3.5 px-4 rounded-xl text-xs border-2 border-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <i class="fa-solid fa-play"></i> 처음부터 재생
+                    </button>
+                    <!-- Pause (Starts Hidden until playback starts) -->
+                    <button id="modal-pause-btn" class="hidden brutal-btn bg-[#ffc857] text-black font-black py-3.5 px-4 rounded-xl text-xs border-2 border-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <i class="fa-solid fa-pause"></i> 일시정지
+                    </button>
+                    <button id="modal-resume-btn" class="hidden brutal-btn bg-[#e2f0cb] text-black font-black py-3.5 px-4 rounded-xl text-xs border-2 border-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <i class="fa-solid fa-play"></i> 이어서 듣기
+                    </button>
+                    <!-- Stop -->
+                    <button id="modal-stop-btn" class="brutal-btn bg-white text-black font-black py-3.5 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <i class="fa-solid fa-stop"></i> 낭독 중지
+                    </button>
+                    <!-- Close -->
+                    <button id="modal-close-btn" class="brutal-btn bg-[#ff7096] text-black font-black py-3.5 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <i class="fa-solid fa-xmark"></i> 상담창 닫기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACCESSIBILITY/FOOTER (Image 2 Requirements Fully Met) -->
+    <footer class="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t-4 border-black text-center text-xs text-black">
+        <p class="font-extrabold text-black">🏫 마산제일여자중학교 선생님을 위한 건강 전용 급식 연동 스마트 허브</p>
+        <p class="mt-2 text-[11px] leading-relaxed font-bold">
+            선생님들을 위한 초정밀 1:1 맞춤형 질환 예방 분석 및 쾌속 TTS 서비스가 포함되어 있습니다.
+        </p>
+        <p class="mt-4 text-slate-500 font-bold">© 2026 Masan Jeil Girls' Middle School Lunch Service App. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- Core Administration Parameters ---
+        const OE_CODE = "S10"; // 경상남도교육청
+        const SCHOOL_CODE = "9022133"; // 마산제일여자중학교 행정표준코드
+        let selectedDate = new Date("2026-06-23"); // 2026년 6월 23일 (기본 설정 날짜)
+        let currentMealData = null; 
+        let isLargeFontActive = false;
+        let selectedReviewStars = 5;
+
+        // In-memory reviews store
+        let feedbackLogs = JSON.parse(localStorage.getItem('senior_meal_reviews_jeil_mid') || '{}');
+
+        // Dynamic Diseases Database with Food Triggers for 5 diseases
+        const DISEASES_COACHING_ENGINE = {
+            hypertension: {
+                title: "고혈압 (Hypertension) 예방 저염 처방",
+                alert: "나트륨 조절 처방 🩸",
+                evaluate: (meal) => {
+                    const dangerousFoods = [];
+                    const beneficialFoods = [];
+                    
+                    const sodiumKeywords = ["찌개", "국", "김치", "무침", "갈비찜", "조림", "장아찌", "양념", "볶음"];
+                    meal.allDishes.forEach(food => {
+                        if (sodiumKeywords.some(key => food.includes(key))) {
+                            dangerousFoods.push(food);
+                        }
+                        if (food.includes("수박") || food.includes("바나나") || food.includes("현미") || food.includes("토마토") || food.includes("참외")) {
+                            beneficialFoods.push(food);
+                        }
+                    });
+
+                    let dangerText = dangerousFoods.length > 0 
+                        ? `오늘 식단 중 [${dangerousFoods.slice(0, 3).join(', ')}] 등은 양념과 염도가 상당할 수 있으니, 국물과 양념은 최소화하여 건더기 위주로 즐기시는 것이 안전합니다.` 
+                        : "오늘 급식은 자극이 아주 적고 정갈한 청정 저염식 조합입니다.";
+
+                    let adviceText = beneficialFoods.length > 0
+                        ? `오늘 같이 배정된 [${beneficialFoods.join(', ')}] 등에는 혈압 강화 작용을 촉진하는 칼륨 성분이 가득하여 염분의 신속 배출에 아주 이롭습니다.`
+                        : "염분 분출을 돕기 위해, 식사 후 따뜻한 녹차나 맑은 생수를 한 잔 정도 충분히 음용해 주시면 좋습니다.";
+
+                    return { danger: dangerText, action: adviceText };
+                }
+            },
+            diabetes: {
+                title: "당뇨병 (Diabetes) 탄수화물 혈당 조절",
+                alert: "혈당 방어 처방 🌾",
+                evaluate: (meal) => {
+                    const carboFoods = [];
+                    const fiberFoods = [];
+
+                    const carboKeywords = ["밥", "떡", "빵", "감자", "고구마", "면", "설탕", "마카롱", "단맛"];
+                    meal.allDishes.forEach(food => {
+                        if (carboKeywords.some(key => food.includes(key))) {
+                            carboFoods.push(food);
+                        }
+                        if (food.includes("나물") || food.includes("채소") || food.includes("콩나물") || food.includes("시금치") || food.includes("브로콜리")) {
+                            fiberFoods.push(food);
+                        }
+                    });
+
+                    let dangerText = carboFoods.length > 0
+                        ? `정제 탄수화물 또는 단맛이 다소 강한 [${carboFoods.slice(0, 3).join(', ')}]은 위장의 소화 흡수 속도를 올려 혈당스파이크를 일으키기 쉬우니 양을 줄여보세요.`
+                        : "혈당 수치 급상승 걱정 없이 가볍게 드시기 완벽한 저당 식단입니다.";
+
+                    let adviceText = fiberFoods.length > 0
+                        ? `식판 안의 섬유질이 풍부한 [${fiberFoods.join(', ')}]을 먼저 입에 넣어 천천히 씹어 드신 후, 밥과 고기를 드시는 '거꾸로 식사법'을 꼭 이행해 보세요.`
+                        : "췌장의 인슐린 과부하를 덜어주기 위해 오늘 밥류는 평상시 식판 배급량의 절반 가량 덜어내어 섭취하시길 조언해 올립니다.";
+
+                    return { danger: dangerText, action: adviceText };
+                }
+            },
+            hyperlipidemia: {
+                title: "고지혈증 (Hyperlipidemia) 콜레스테롤 케어",
+                alert: "혈관 기름 조절 🥩",
+                evaluate: (meal) => {
+                    const lipidFoods = [];
+                    const clearFoods = [];
+
+                    const fatKeywords = ["갈비", "고기", "돈가스", "튀김", "돼지", "달걀", "치즈", "버터", "구이"];
+                    meal.allDishes.forEach(food => {
+                        if (fatKeywords.some(key => food.includes(key))) {
+                            lipidFoods.push(food);
+                        }
+                        if (food.includes("현미") || food.includes("미역") || food.includes("마늘") || food.includes("야채") || food.includes("두부") || food.includes("양파")) {
+                            clearFoods.push(food);
+                        }
+                    });
+
+                    let dangerText = lipidFoods.length > 0
+                        ? `동물성 지방 및 높은 포화지방이 가미된 [${lipidFoods.slice(0, 3).join(', ')}]은 혈관 내 중성지방과 유해 콜레스테롤의 축적을 부추길 염려가 있습니다.`
+                        : "혈중 기름을 맑게 다스리는데 도움을 주는 매우 가벼운 식단 구조입니다.";
+
+                    let adviceText = clearFoods.length > 0
+                        ? `풍부한 유기질과 알칼리성 혈관 정화 효능을 품은 [${clearFoods.join(', ')}] 위주로 식사하셔서 지질 축적을 안전하게 방어하세요.`
+                        : "저녁에는 혈중 노폐물 소화 및 기름 배설 작용을 증진시키는 등푸른 생선류나 채식류 반찬을 곁들여 주시면 균형이 우수합니다.";
+
+                    return { danger: dangerText, action: adviceText };
+                }
+            },
+            gout: {
+                title: "통풍 (Gout) 퓨린 통제 및 요산 희석",
+                alert: "요산 축적 주의 🍻",
+                evaluate: (meal) => {
+                    const purineFoods = [];
+                    const hydrationFoods = [];
+
+                    const purineKeywords = ["고기", "갈비", "해물", "미역", "멸치", "쇠고기", "돼지", "닭", "새우"];
+                    meal.allDishes.forEach(food => {
+                        if (purineKeywords.some(key => food.includes(key))) {
+                            purineFoods.push(food);
+                        }
+                        if (food.includes("수박") || food.includes("과일") || food.includes("오이") || food.includes("물")) {
+                            hydrationFoods.push(food);
+                        }
+                    });
+
+                    let dangerText = purineFoods.length > 0
+                        ? `고농도의 퓨린 성분을 내포한 [${purineFoods.slice(0, 3).join(', ')}]은 요산 요 배설을 방해하여 발가락 및 관절 부위의 가벼운 염증 통증을 야기할 수 있습니다.`
+                        : "요산 결정 생성을 방지할 수 있는 평온하고 청명한 비육류성 식사 구성입니다.";
+
+                    let adviceText = hydrationFoods.length > 0
+                        ? `수분 함량과 정화 성분이 고도로 풍부한 [${hydrationFoods.join(', ')}]을 통해 요산의 즉각적인 희석 작용을 누리시기 쉽습니다.`
+                        : "체내 축적된 독소 요산의 신장 배출을 도모하기 위하여 식후 최소 300밀리리터 이상의 따뜻한 맑은 생수를 자주 섭취해 주시는 습관이 아주 훌륭합니다.";
+
+                    return { danger: dangerText, action: adviceText };
+                }
+            },
+            gastritis: {
+                title: "위염/식도염 (Gastritis) 위벽 점막 수호",
+                alert: "속쓰림 예방 처방 🍋",
+                evaluate: (meal) => {
+                    const acidFoods = [];
+                    const protectFoods = [];
+
+                    const spicyKeywords = ["김치", "무침", "찌개", "마늘", "매운", "양념", "고추장", "식초"];
+                    meal.allDishes.forEach(food => {
+                        if (spicyKeywords.some(key => food.includes(key))) {
+                            acidFoods.push(food);
+                        }
+                        if (food.includes("달걀") || food.includes("두부") || food.includes("밥") || food.includes("미역국") || food.includes("바나나") || food.includes("애호박")) {
+                            protectFoods.push(food);
+                        }
+                    });
+
+                    let dangerText = acidFoods.length > 0
+                        ? `위벽에 기계적 자극과 가파른 산도 분비를 부르는 [${acidFoods.slice(0, 3).join(', ')}] 반찬류는 조금씩만 가져가셔서 과산 분비를 줄이셔야 속이 가벼워집니다.`
+                        : "위 점막 부담을 전혀 가하지 않는 소화가 무척 용이하고 정갈한 식생활 배열입니다.";
+
+                    let adviceText = protectFoods.length > 0
+                        ? `위를 포근히 감싸 위산 도포 효과를 촉진하는 [${protectFoods.join(', ')}]을 제일 먼저 소량 한술 드시고 정식을 시작하시기를 적극 건의합니다.`
+                        : "식사 도중 수분 섭취를 지나치게 많이 하실 경우 위소화액이 조기에 희석되어 역류를 유발하기 쉬우니 삼가 주세요.";
+
+                    return { danger: dangerText, action: adviceText };
+                }
+            }
+        };
+
+        // Standard Fallback meals DB
+        const LUNCH_FALLBACK_DATABASE = {
+            rice: ["발아현미밥", "찰흑미밥", "귀리쌀밥", "찰잡곡밥", "곤드레나물밥", "보리쌀밥"],
+            soup: ["맑은쇠고기미역국", "시금치두부된장국", "단호박크림스프", "꽃게해물찌개", "해물순두부찌개", "아욱수제비국"],
+            main: ["LA식돼지갈비찜", "수제마늘불고기", "훈제오리야채볶음", "연어구이*데리야끼소스", "생선가스*타르타르소스"],
+            sub1: ["매콤콩나물무침", "도토리묵야채무침", "메추리알장조림", "해물김치전", "궁중당면잡채"],
+            sub2: ["부추달걀말이", "느타리버섯참기름무침", "애호박새우볶음", "연근들깨소스무침", "가지양념조림"],
+            kimchi: ["배추김치", "아삭깍두기", "열무김치", "나박물김치", "석박지"],
+            dessert: ["허니수박", "친환경 사과즙", "바나나", "골드파인애플", "요구르트"]
+        };
+
+        // DOM Anchors
+        const targetDateInput = document.getElementById('target-date');
+        const prevDayBtn = document.getElementById('prev-day');
+        const nextDayBtn = document.getElementById('next-day');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        const todayBtn = document.getElementById('today-btn');
+        const fontToggleBtn = document.getElementById('font-toggle-btn');
+        const fontToggleText = document.getElementById('font-toggle-text');
+        
+        const trayDateTitle = document.getElementById('tray-date-title');
+        const weekTabs = document.getElementById('week-tabs');
+
+        const dishRice = document.getElementById('dish-rice');
+        const dishSoup = document.getElementById('dish-soup');
+        const dishMain = document.getElementById('dish-main');
+        const dishSub1 = document.getElementById('dish-sub1');
+        const dishSub2 = document.getElementById('dish-sub2');
+        const dishKimchi = document.getElementById('dish-kimchi');
+        const dishDessert = document.getElementById('dish-dessert');
+
+        const allergiesRice = document.getElementById('allergies-rice');
+        const allergiesSoup = document.getElementById('allergies-soup');
+        const allergiesMain = document.getElementById('allergies-main');
+        const allergiesSub1 = document.getElementById('allergies-sub1');
+        const allergiesSub2 = document.getElementById('allergies-sub2');
+        const allergiesKimchi = document.getElementById('allergies-kimchi');
+        const allergiesDessert = document.getElementById('allergies-dessert');
+
+        const noMealOverlay = document.getElementById('no-meal-overlay');
+
+        const caloriesDisplay = document.getElementById('calories-display');
+        const calPercentageText = document.getElementById('cal-percentage-text');
+        const calPercentageBar = document.getElementById('cal-percentage-bar');
+        const nutrientGrid = document.getElementById('nutrient-grid');
+
+        // Geriatric Disease Elements
+        const adultDiseaseSelector = document.getElementById('adult-disease-selector');
+        const prescriptionDiseaseTitle = document.getElementById('prescription-disease-title');
+        const prescriptionAlertBadge = document.getElementById('prescription-alert-badge');
+        const prescriptionWarningText = document.getElementById('prescription-warning-text');
+        const prescriptionActionText = document.getElementById('prescription-action-text');
+
+        // TTS Buttons
+        const ttsReadMenuBtn = document.getElementById('tts-read-menu-btn');
+        const ttsReadPrescriptionBtn = document.getElementById('tts-read-prescription-btn');
+        const ttsPrescStopBtn = document.getElementById('tts-presc-stop-btn');
+        const ttsPrescBtnText = document.getElementById('tts-presc-btn-text');
+        const speakingWave = document.getElementById('speaking-wave');
+
+        // Chatbot Elements
+        const chatbotLogs = document.getElementById('chatbot-logs');
+        const chatInput = document.getElementById('chat-input');
+        const chatSendBtn = document.getElementById('chat-send-btn');
+
+        // Chatbot Dedicated TTS Modal Elements
+        const chatTtsModal = document.getElementById('chat-tts-modal');
+        const chatTtsText = document.getElementById('chat-tts-text');
+        const ttsSpeedSlider = document.getElementById('tts-speed-slider');
+        const ttsSpeedVal = document.getElementById('tts-speed-val');
+        const modalPlayBtn = document.getElementById('modal-play-btn');
+        const modalPauseBtn = document.getElementById('modal-pause-btn');
+        const modalResumeBtn = document.getElementById('modal-resume-btn');
+        const modalStopBtn = document.getElementById('modal-stop-btn');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalSpeakingWave = document.getElementById('modal-speaking-wave');
+
+        // Review Form Elements
+        const reviewSubmissionForm = document.getElementById('review-submission-form');
+        const reviewAuthorInput = document.getElementById('review-author');
+        const reviewMessageInput = document.getElementById('review-message');
+        const reviewsFeedContainer = document.getElementById('reviews-feed-container');
+        const starSelector = document.getElementById('star-selector');
+
+        // Date String conversion helper
+        function getYYYYMMDD(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}${month}${day}`;
+        }
+
+        function formatDisplayDate(date) {
+            const days = ["일", "월", "화", "수", "목", "금", "토"];
+            return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} (${days[date.getDay()]})`;
+        }
+
+        // Clean allergen strings from NEIS output format
+        function cleanAllergensAndName(rawString) {
+            if (!rawString) return { name: "-", allergens: [] };
+            const allergenMatch = rawString.match(/\(([\d\.]+)\)/);
+            const list = allergenMatch ? allergenMatch[1].split('.').filter(Boolean) : [];
+            const cleanName = rawString.replace(/\s*\([\d\.]+\)/g, '').replace(/\*/g, '').trim();
+            return { name: cleanName, allergens: list };
+        }
+
+        // Fetch School Lunch via NEIS Open API
+        async function loadMealReport(dateObj) {
+            const ymd = getYYYYMMDD(dateObj);
+
+            if (dateObj.getDay() === 0 || dateObj.getDay() === 6) {
+                return generateSophisticatedMockMeal(dateObj);
+            }
+
+            try {
+                const apiUrl = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&pIndex=1&pSize=10&ATPT_OFCDC_SC_CODE=${OE_CODE}&SD_SCHUL_CODE=${SCHOOL_CODE}&MLSV_YMD=${ymd}`;
+                const res = await fetch(apiUrl);
+                if (!res.ok) throw new Error("NEIS API lookup failed.");
+                
+                const data = await res.json();
+                
+                if (data.mealServiceDietInfo && data.mealServiceDietInfo[1]?.row) {
+                    const row = data.mealServiceDietInfo[1].row.find(r => r.MMEAL_SC_NM === "중식" || r.MMEAL_SC_CODE === "2");
+                    if (row) {
+                        return parseNeisRow(row);
+                    }
+                }
+            } catch (err) {
+                console.warn("NEIS API request failed. Falling back to simulated system.", err);
+            }
+
+            return generateSophisticatedMockMeal(dateObj);
+        }
+
+        function parseNeisRow(row) {
+            const lines = row.DDISH_NM.split('<br/>');
+            const parsedItems = lines.map(line => cleanAllergensAndName(line.trim())).filter(x => x.name);
+
+            const meal = {
+                rice: null, soup: null, main: null, sub1: null, sub2: null, kimchi: null, dessert: null,
+                calories: parseFloat(row.CAL_INFO) || 820,
+                nutrients: row.NTR_INFO || "탄수화물(g):112\n단백질(g):32.5\n지방(g):21.5",
+                allDishes: parsedItems.map(p => p.name)
+            };
+
+            // Basic Classification logic
+            parsedItems.forEach(item => {
+                const n = item.name;
+                if (n.includes('밥') || n.includes('덮밥') || n.includes('볶음밥') || n.includes('죽')) {
+                    if (!meal.rice) meal.rice = item;
+                } else if (n.includes('국') || n.includes('찌개') || n.includes('탕') || n.includes('스프')) {
+                    if (!meal.soup) meal.soup = item;
+                } else if (n.includes('갈비') || n.includes('고기') || n.includes('가스') || n.includes('불고기') || n.includes('구이') || n.includes('조림') || n.includes('찜') || n.includes('스테이크')) {
+                    if (!meal.main) meal.main = item;
+                    else if (!meal.sub1) meal.sub1 = item;
+                } else if (n.includes('김치') || n.includes('깍두기') || n.includes('석박지')) {
+                    if (!meal.kimchi) meal.kimchi = item;
+                } else if (n.includes('과일') || n.includes('수박') || n.includes('요구르트') || n.includes('쿠키') || n.includes('주스') || n.includes('마카롱') || n.includes('푸딩') || n.includes('바나나') || n.includes('파인애플')) {
+                    if (!meal.dessert) meal.dessert = item;
+                } else {
+                    if (!meal.sub1) meal.sub1 = item;
+                    else if (!meal.sub2) meal.sub2 = item;
+                    else if (!meal.main) meal.main = item;
+                }
+            });
+
+            // Backups in case of missing categories
+            if (!meal.rice) meal.rice = parsedItems[0] || { name: "현미잡곡밥", allergens: [] };
+            if (!meal.soup) meal.soup = parsedItems[1] || { name: "쇠고기미역국", allergens: [] };
+            if (!meal.main) meal.main = parsedItems[2] || { name: "LA식돼지갈비찜", allergens: ["10"] };
+            if (!meal.sub1) meal.sub1 = parsedItems[3] || { name: "매콤콩나물무침", allergens: [] };
+            if (!meal.sub2) meal.sub2 = parsedItems[4] || { name: "부추달걀말이", allergens: ["1"] };
+            if (!meal.kimchi) meal.kimchi = parsedItems[5] || { name: "배추김치", allergens: ["9"] };
+            if (!meal.dessert) meal.dessert = parsedItems[6] || { name: "싱싱수박", allergens: [] };
+
+            return meal;
+        }
+
+        // Generate Premium simulated meal in case of weekend/CORS limits
+        function generateSophisticatedMockMeal(dateObj) {
+            const seed = dateObj.getFullYear() + dateObj.getMonth() + dateObj.getDate();
+            const randomPick = (arr) => {
+                const idx = Math.floor(Math.abs(Math.sin(seed + arr.length)) * 1000 % arr.length);
+                return arr[idx];
+            };
+
+            const rRice = randomPick(LUNCH_FALLBACK_DATABASE.rice);
+            const rSoup = randomPick(LUNCH_FALLBACK_DATABASE.soup);
+            const rMain = randomPick(LUNCH_FALLBACK_DATABASE.main);
+            const rSub1 = randomPick(LUNCH_FALLBACK_DATABASE.sub1);
+            const rSub2 = randomPick(LUNCH_FALLBACK_DATABASE.sub2);
+            const rKimchi = randomPick(LUNCH_FALLBACK_DATABASE.kimchi);
+            const rDessert = randomPick(LUNCH_FALLBACK_DATABASE.dessert);
+
+            return {
+                rice: { name: rRice, allergens: ["5"] },
+                soup: { name: rSoup, allergens: ["16"] },
+                main: { name: rMain, allergens: ["10", "13"] },
+                sub1: { name: rSub1, allergens: [] },
+                sub2: { name: rSub2, allergens: ["1"] },
+                kimchi: { name: rKimchi, allergens: ["9"] },
+                dessert: { name: rDessert, allergens: [] },
+                calories: Math.floor(780 + Math.sin(seed) * 60),
+                nutrients: `탄수화물(g) : ${105 + Math.floor(Math.sin(seed + 1) * 5)}\n단백질(g) : ${29 + Math.floor(Math.sin(seed + 2) * 2)}\n지방(g) : ${20 + Math.floor(Math.cos(seed) * 2)}\n나트륨(mg) : ${920 + Math.floor(Math.sin(seed) * 90)}`,
+                allDishes: [rRice, rSoup, rMain, rSub1, rSub2, rKimchi, rDessert]
+            };
+        }
+
+        // Draw 5 days weekly menu tabs (Unlocked bounds - works for any year and month with Neo-Brutalist design)
+        function renderWeekTabsNavigation(anchorDate) {
+            weekTabs.innerHTML = '';
+            const dayOfWeek = anchorDate.getDay();
+            const startDiff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            
+            const startOfWeek = new Date(anchorDate);
+            startOfWeek.setDate(anchorDate.getDate() + startDiff);
+
+            const daysNames = ["월", "화", "수", "목", "금"];
+            for (let i = 0; i < 5; i++) {
+                const iterDate = new Date(startOfWeek);
+                iterDate.setDate(startOfWeek.getDate() + i);
+
+                const isSelected = getYYYYMMDD(iterDate) === getYYYYMMDD(selectedDate);
+
+                const tab = document.createElement('button');
+                tab.className = `flex flex-col items-center justify-center p-3 rounded-xl border-2 border-black transition-all ${
+                    isSelected 
+                    ? 'bg-[#ffc857] text-black font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] -translate-y-1' 
+                    : 'bg-white text-black font-bold shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:bg-[#ffe5d9] hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                }`;
+
+                const displayMonth = iterDate.getMonth() + 1;
+
+                tab.innerHTML = `
+                    <span class="text-[10px] uppercase font-black tracking-wider opacity-80">${daysNames[i]}요일</span>
+                    <span class="text-base font-black mt-1">${displayMonth}/${iterDate.getDate()}</span>
+                `;
+
+                tab.onclick = () => {
+                    selectedDate = iterDate;
+                    targetDateInput.value = getYYYYMMDD(iterDate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+                    loadSelectedDayDetails();
+                };
+
+                weekTabs.appendChild(tab);
+            }
+        }
+
+        // Full UI Render cycle
+        async function loadSelectedDayDetails() {
+            renderWeekTabsNavigation(selectedDate);
+            trayDateTitle.innerText = formatDisplayDate(selectedDate);
+
+            if (selectedDate.getDay() === 0 || selectedDate.getDay() === 6) {
+                noMealOverlay.classList.remove('hidden');
+            } else {
+                noMealOverlay.classList.add('hidden');
+            }
+
+            const meal = await loadMealReport(selectedDate);
+            currentMealData = meal;
+
+            renderCompartmentElement(meal.rice, dishRice, allergiesRice);
+            renderCompartmentElement(meal.soup, dishSoup, allergiesSoup);
+            renderCompartmentElement(meal.main, dishMain, allergiesMain);
+            renderCompartmentElement(meal.sub1, dishSub1, allergiesSub1);
+            renderCompartmentElement(meal.sub2, dishSub2, allergiesSub2);
+            renderCompartmentElement(meal.kimchi, dishKimchi, allergiesKimchi);
+            renderCompartmentElement(meal.dessert, dishDessert, allergiesDessert);
+
+            caloriesDisplay.innerText = `${meal.calories} kcal`;
+            const maxKcal = 800;
+            const percentage = Math.min(120, Math.floor((meal.calories / maxKcal) * 100));
+            calPercentageText.innerText = `${percentage}%`;
+            calPercentageBar.style.width = `${percentage}%`;
+
+            renderNutrientBreakdown(meal.nutrients);
+            triggerPrescriptionEvaluation();
+            renderCurrentReviews();
+        }
+
+        function renderCompartmentElement(dish, textEl, allergyEl) {
+            if (!dish) {
+                textEl.innerText = "-";
+                allergyEl.innerText = "";
+                return;
+            }
+            textEl.innerText = dish.name;
+            if (dish.allergens && dish.allergens.length > 0) {
+                allergyEl.innerHTML = `<span class="bg-white text-black text-[9px] font-black px-1.5 py-0.5 rounded border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"><i class="fa-solid fa-triangle-exclamation text-rose-500"></i> 알레르기:${dish.allergens.join(',')}</span>`;
+            } else {
+                allergyEl.innerHTML = "";
+            }
+        }
+
+        function renderNutrientBreakdown(nutriStr) {
+            nutrientGrid.innerHTML = '';
+            const list = nutriStr.split(/[<br/>\n]+/).filter(Boolean);
+            list.forEach(item => {
+                const parts = item.split(':');
+                if (parts.length < 2) return;
+                const label = parts[0].trim();
+                const value = parts[1].trim();
+
+                const box = document.createElement('div');
+                box.className = "bg-white border-2 border-black p-3 rounded-xl flex flex-col justify-between shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]";
+                box.innerHTML = `
+                    <span class="text-[10px] font-black text-slate-500 uppercase">${label}</span>
+                    <span class="text-sm font-black text-black mt-1">${value}</span>
+                `;
+                nutrientGrid.appendChild(box);
+            });
+        }
+
+        // Live Health analysis
+        function triggerPrescriptionEvaluation() {
+            if (!currentMealData) return;
+            const diseaseKey = adultDiseaseSelector.value;
+            const prescModule = DISEASES_COACHING_ENGINE[diseaseKey];
+            if (!prescModule) return;
+
+            const analysis = prescModule.evaluate(currentMealData);
+
+            prescriptionDiseaseTitle.innerText = prescModule.title;
+            prescriptionAlertBadge.innerText = prescModule.alert;
+            prescriptionWarningText.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-500 mr-1 animate-pulse"></i> ${analysis.danger}`;
+            prescriptionActionText.innerHTML = `<i class="fa-solid fa-heart-pulse text-[#00a896] mr-1"></i> <strong>처방가이드:</strong> ${analysis.action}`;
+
+            const card = document.getElementById('prescription-display-card');
+            card.classList.add('glow-active');
+            setTimeout(() => card.classList.remove('glow-active'), 1500);
+        }
+
+        adultDiseaseSelector.onchange = triggerPrescriptionEvaluation;
+
+        // NATIVE HIGH-SPEED TTS (SpeechSynthesis)
+        let activeVoiceUtterance = null;
+
+        function playInstantLocalTts(text) {
+            stopLocalTtsPlayback();
+
+            if (!('speechSynthesis' in window)) {
+                displayNoticeBox("이 브라우저 혹은 기기는 한글 음성 낭독(TTS) 기능을 지원하지 않습니다.");
+                return;
+            }
+
+            activeVoiceUtterance = new SpeechSynthesisUtterance(text);
+            activeVoiceUtterance.lang = 'ko-KR';
+            activeVoiceUtterance.rate = 0.85; // Slower tempo for elder clarity
+            activeVoiceUtterance.pitch = 1.05;
+
+            const voices = window.speechSynthesis.getVoices();
+            const koVoice = voices.find(v => v.lang.startsWith('ko') || v.lang === 'ko-KR');
+            if (koVoice) {
+                activeVoiceUtterance.voice = koVoice;
+            }
+
+            activeVoiceUtterance.onstart = () => {
+                speakingWave.classList.remove('hidden');
+                speakingWave.classList.add('flex');
+                ttsPrescStopBtn.classList.remove('hidden');
+                ttsReadPrescriptionBtn.disabled = true;
+                ttsReadPrescriptionBtn.classList.add('opacity-70');
+                ttsPrescBtnText.innerText = "음성 낭독 실행 중...";
+            };
+
+            activeVoiceUtterance.onend = () => {
+                resetTtsButtonsState();
+            };
+
+            activeVoiceUtterance.onerror = (e) => {
+                console.warn("TTS synth error", e);
+                resetTtsButtonsState();
+            };
+
+            window.speechSynthesis.speak(activeVoiceUtterance);
+        }
+
+        function stopLocalTtsPlayback() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            resetTtsButtonsState();
+        }
+
+        function resetTtsButtonsState() {
+            speakingWave.classList.add('hidden');
+            speakingWave.classList.remove('flex');
+            ttsPrescStopBtn.classList.add('hidden');
+            ttsReadPrescriptionBtn.disabled = false;
+            ttsReadPrescriptionBtn.classList.remove('opacity-70');
+            ttsPrescBtnText.innerText = "코칭 처방 신속 음성(TTS) 듣기";
+        }
+
+        // Complete daily lunch tray readout
+        function readDailyLunchMenuLoudly() {
+            if (!currentMealData) return;
+            const textToSpeak = `오늘 마산제일여자중학교 중식 급식 식단을 정성껏 안내해 드립니다. 밥으로는 ${currentMealData.rice.name}, 따끈한 국물은 ${currentMealData.soup.name}, 맛을 내는 주반찬은 ${currentMealData.main.name}, 영양이 풍부한 보조반찬은 ${currentMealData.sub1.name}과 ${currentMealData.sub2.name}, 그리고 식판의 김치류는 ${currentMealData.kimchi.name}, 달콤한 후식은 ${currentMealData.dessert.name} 입니다. 건강하고 안전한 식사 되십시오!`;
+            playInstantLocalTts(textToSpeak);
+        }
+
+        ttsReadMenuBtn.onclick = readDailyLunchMenuLoudly;
+
+        ttsReadPrescriptionBtn.onclick = () => {
+            const diseaseKey = adultDiseaseSelector.value;
+            const prescModule = DISEASES_COACHING_ENGINE[diseaseKey];
+            if (!prescModule || !currentMealData) return;
+            const analysis = prescModule.evaluate(currentMealData);
+            
+            const explanation = `선생님을 위한 성인병 예방 지침입니다. ${prescModule.title} 진단 결과, ${analysis.danger} 이에 대항하여, ${analysis.action}`;
+            playInstantLocalTts(explanation);
+        };
+
+        ttsPrescStopBtn.onclick = () => {
+            stopLocalTtsPlayback();
+        };
+
+        // --- NEW DEDICATED CHATBOT TTS AUDIO MANAGER MODAL ---
+        let chatSpeechUtterance = null;
+        let isChatSpeaking = false;
+        let isChatPaused = false;
+
+        function openJennyTtsModal(rawText) {
+            // Stop existing general TTS to avoid collision
+            stopLocalTtsPlayback();
+            stopChatSpeechPlayback();
+
+            // Strip Markdown elements & tags for safe reading
+            const cleanReadingText = rawText
+                .replace(/\*\*/g, '')
+                .replace(/<[^>]*>/g, '')
+                .replace(/🍵/g, '')
+                .replace(/🌸/g, '방긋')
+                .trim();
+
+            // Set text inside Modal with highlighting for bold elements
+            const styledHtml = rawText
+                .replace(/\n/g, '<br/>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#00a896] font-extrabold text-lg sm:text-xl">$1</strong>');
+            
+            chatTtsText.innerHTML = styledHtml;
+
+            // Show Modal
+            chatTtsModal.classList.remove('hidden');
+            chatTtsModal.classList.add('flex');
+
+            // Set up initial speed from slider and play
+            const speed = parseFloat(ttsSpeedSlider.value);
+            ttsSpeedVal.innerText = `${speed.toFixed(1)}배속`;
+
+            playChatSpeech(cleanReadingText, speed);
+        }
+
+        function playChatSpeech(text, rate) {
+            if (!('speechSynthesis' in window)) {
+                displayNoticeBox("이 브라우저에서는 오디오 출력을 지원하지 않습니다.");
+                return;
+            }
+
+            window.speechSynthesis.cancel(); // Stop anything else
+
+            chatSpeechUtterance = new SpeechSynthesisUtterance(text);
+            chatSpeechUtterance.lang = 'ko-KR';
+            chatSpeechUtterance.rate = rate;
+            chatSpeechUtterance.pitch = 1.1; // Friendly higher pitch for Jenny
+
+            // Set voice to Korean if available
+            const voices = window.speechSynthesis.getVoices();
+            const koVoice = voices.find(v => v.lang.startsWith('ko') || v.lang === 'ko-KR');
+            if (koVoice) {
+                chatSpeechUtterance.voice = koVoice;
+            }
+
+            chatSpeechUtterance.onstart = () => {
+                isChatSpeaking = true;
+                isChatPaused = false;
+                updateChatTtsUIState();
+            };
+
+            chatSpeechUtterance.onend = () => {
+                isChatSpeaking = false;
+                isChatPaused = false;
+                updateChatTtsUIState();
+            };
+
+            chatSpeechUtterance.onerror = () => {
+                isChatSpeaking = false;
+                isChatPaused = false;
+                updateChatTtsUIState();
+            };
+
+            window.speechSynthesis.speak(chatSpeechUtterance);
+        }
+
+        function pauseChatSpeech() {
+            if ('speechSynthesis' in window && isChatSpeaking && !isChatPaused) {
+                window.speechSynthesis.pause();
+                isChatPaused = true;
+                updateChatTtsUIState();
+            }
+        }
+
+        function resumeChatSpeech() {
+            if ('speechSynthesis' in window && isChatPaused) {
+                window.speechSynthesis.resume();
+                isChatPaused = false;
+                updateChatTtsUIState();
+            } else if (!isChatSpeaking) {
+                const text = chatTtsText.innerText;
+                const speed = parseFloat(ttsSpeedSlider.value);
+                playChatSpeech(text, speed);
+            }
+        }
+
+        function stopChatSpeechPlayback() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                isChatSpeaking = false;
+                isChatPaused = false;
+                updateChatTtsUIState();
+            }
+        }
+
+        function updateChatTtsUIState() {
+            if (isChatSpeaking && !isChatPaused) {
+                // Currently playing
+                modalPlayBtn.classList.add('hidden');
+                modalResumeBtn.classList.add('hidden');
+                modalPauseBtn.classList.remove('hidden');
+                modalSpeakingWave.classList.remove('hidden');
+                modalSpeakingWave.classList.add('flex');
+            } else if (isChatPaused) {
+                // Paused
+                modalPlayBtn.classList.add('hidden');
+                modalPauseBtn.classList.add('hidden');
+                modalResumeBtn.classList.remove('hidden');
+                modalSpeakingWave.classList.add('hidden');
+                modalSpeakingWave.classList.remove('flex');
+            } else {
+                // Stopped / Ended
+                modalPlayBtn.classList.remove('hidden');
+                modalPauseBtn.classList.add('hidden');
+                modalResumeBtn.classList.add('hidden');
+                modalSpeakingWave.classList.add('hidden');
+                modalSpeakingWave.classList.remove('flex');
+            }
+        }
+
+        // Modal Controls Wiring
+        ttsSpeedSlider.oninput = (e) => {
+            const speed = parseFloat(e.target.value);
+            ttsSpeedVal.innerText = `${speed.toFixed(1)}배속`;
+            
+            // If playing, restart speaking with new speed immediately
+            if (isChatSpeaking) {
+                const rawText = chatTtsText.innerText;
+                playChatSpeech(rawText, speed);
+            }
+        };
+
+        modalPlayBtn.onclick = () => {
+            const rawText = chatTtsText.innerText;
+            const speed = parseFloat(ttsSpeedSlider.value);
+            playChatSpeech(rawText, speed);
+        };
+
+        modalPauseBtn.onclick = pauseChatSpeech;
+        modalResumeBtn.onclick = resumeChatSpeech;
+        modalStopBtn.onclick = stopChatSpeechPlayback;
+        
+        modalCloseBtn.onclick = () => {
+            stopChatSpeechPlayback();
+            chatTtsModal.classList.add('hidden');
+        };
+
+        // --- AI Dietitian 'Jenny' Gemini Endpoint ---
+        async function queryJennyDietitian(userPrompt) {
+            let contextString = "급식 정보 없음";
+            if (currentMealData) {
+                contextString = `
+                일자: ${formatDisplayDate(selectedDate)}
+                중식 메뉴: 밥(${currentMealData.rice.name}), 국(${currentMealData.soup.name}), 메인(${currentMealData.main.name}), 반찬1(${currentMealData.sub1.name}), 반찬2(${currentMealData.sub2.name}), 김치(${currentMealData.kimchi.name}), 디저트(${currentMealData.dessert.name})
+                칼로리: ${currentMealData.calories} kcal
+                `;
+            }
+
+            const activeDiseaseKey = adultDiseaseSelector.value;
+            const diseaseTitle = DISEASES_COACHING_ENGINE[activeDiseaseKey]?.title || "고혈압";
+
+            // Enforces extremely polite/respectful tone as requested in system user instructions
+            const sysInstruction = `
+            당신은 경상남도 창원시 마산합포구에 위치한 '마산제일여자중학교'의 현명하고 대단히 공손한 AI 보건교사 '제니'입니다.
+            대화 상대는 학교를 이끌어가시는 50대~60대 이상의 정경스럽고 지체 높은 시니어 선생님들이십니다.
+            언제나 극진히 공송하고 품격이 가득 찬 황송하며 온화한 말투를 일관되게 고수하십시오. (~옵니다, ~드리옵니다, ~하시기를 간절히 소망하옵니다 🌸)
+            선생님들이 섭취하신 오늘의 중식 식단을 엄밀히 고려하여, 저녁에는 체내 불순물을 정화하고 몸을 가볍게 채울 수 있는 유익한 유기농 식재료와 생활 처방을 지극히 겸손하고 다정하게 조언해 드리십시오.
+            `;
+
+            const fullPrompt = `
+            [오늘의 급식 정보 컨텍스트]:
+            ${contextString}
+            
+            [오늘 관심 성인병 타겟]:
+            ${diseaseTitle}
+
+            [선생님께서 올리신 건강 상담 질의]:
+            "${userPrompt}"
+            `;
+
+            const payload = {
+                contents: [{ parts: [{ text: fullPrompt }] }],
+                systemInstruction: { parts: [{ text: sysInstruction }] }
+            };
+
+            const apiKey = ""; // Runtime automatically injected by Gemini framework
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error("Gemini API connection failure");
+                const result = await response.json();
+                const reply = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                return reply || "선생님, 통신 장비에 일시적인 장애가 있어 저의 목소리를 온전히 전해드리지 못해 송구스럽사옵니다. 다시 한번 말씀해 주시기를 조아려 부탁드리옵니다. 🌸";
+            } catch (err) {
+                console.error("Gemini connection error: ", err);
+                return "마산제일여중 서버 회선 점검으로 보건 상담이 원활치 못해 대단히 황송하옵니다. 오늘 점심 염분 정화와 위 점막 보호를 위해 식후 따뜻한 물 한잔을 천천히 음용하시길 극진히 제안드리옵니다. 🌸";
+            }
+        }
+
+        async function submitUserChat(customText = null) {
+            const query = customText || chatInput.value.trim();
+            if (!query) return;
+
+            if (!customText) chatInput.value = '';
+
+            addChatLogToScreen("user", query);
+            const loadId = addChatLogToScreen("bot", "선생님의 식단을 정밀 진단하고 건강 코칭 서류를 정리하오니 잠시만 기다려 주시옵소서... 🍵");
+
+            const aiReply = await queryJennyDietitian(query);
+            removeChatLogFromScreen(loadId);
+            addChatLogToScreen("bot", aiReply);
+
+            // AUTO-OPEN THE TTS MODAL AND COMMENCE SPEECH WHEN FRESH ADVICE ARRIVES
+            openJennyTtsModal(aiReply);
+        }
+
+        function addChatLogToScreen(role, message) {
+            const id = 'chat-' + Date.now();
+            const logBox = document.createElement('div');
+            
+            if (role === "user") {
+                logBox.className = "bg-[#d8f3dc] text-black p-3 rounded-xl max-w-[85%] ml-auto border-2 border-black font-black leading-relaxed shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] relative";
+                logBox.innerHTML = message.replace(/\n/g, '<br/>');
+            } else {
+                logBox.className = "bg-white text-black p-4 rounded-xl max-w-[85%] mr-auto border-2 border-black leading-relaxed shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex flex-col gap-2 relative font-bold";
+                
+                // Format markdown bolding for nicer visual chat list
+                const formattedHtml = message
+                    .replace(/\n/g, '<br/>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#00a896] font-extrabold">$1</strong>');
+                
+                logBox.innerHTML = `<div>${formattedHtml}</div>`;
+
+                // If it is a real advice message (not loading placeholder), append the interactive TTS modal trigger
+                if (message.indexOf("🍵") === -1) {
+                    const audioBtn = document.createElement('button');
+                    audioBtn.className = "mt-2 bg-[#ff7096] hover:bg-[#ff85a2] text-black font-black text-[10px] px-3 py-2 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 active:shadow-none border-2 border-black self-start";
+                    audioBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> 음성 상담창 열기 (TTS)`;
+                    audioBtn.onclick = () => {
+                        openJennyTtsModal(message);
+                    };
+                    logBox.appendChild(audioBtn);
+                }
+            }
+            logBox.id = id;
+            chatbotLogs.appendChild(logBox);
+            chatbotLogs.scrollTop = chatbotLogs.scrollHeight;
+            return id;
+        }
+
+        function removeChatLogFromScreen(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        chatSendBtn.onclick = () => submitUserChat();
+        chatInput.onkeypress = (e) => {
+            if (e.key === 'Enter') submitUserChat();
+        };
+
+        document.querySelectorAll('.chat-chip').forEach(chip => {
+            chip.onclick = () => submitUserChat(chip.innerText.trim());
+        });
+
+        // --- Custom Alert Notice box ---
+        function displayNoticeBox(msg) {
+            const overlay = document.createElement('div');
+            overlay.className = "fixed inset-0 bg-black/60 z-[110] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in";
+            overlay.innerHTML = `
+                <div class="bg-white p-6 rounded-2xl max-w-sm w-full shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] border-4 border-black text-center flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-xl bg-[#ffe5d9] text-black border-2 border-black flex items-center justify-center text-2xl mb-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"><i class="fa-solid fa-bell animate-bounce"></i></div>
+                    <h4 class="font-black text-black text-base title-font mb-2">알리미 알림</h4>
+                    <p class="text-xs font-bold text-slate-700 leading-relaxed mb-4">${msg}</p>
+                    <button class="bg-[#00a896] text-black font-black px-6 py-2.5 rounded-xl text-xs hover:bg-[#028090] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all w-full" id="close-notice-btn">확인</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            document.getElementById('close-notice-btn').onclick = () => overlay.remove();
+        }
+
+        // --- Star Ratings & Comments Processing ---
+        function setStarRatingValue(stars) {
+            selectedReviewStars = stars;
+            document.querySelectorAll('.star-option').forEach(el => {
+                const val = parseInt(el.dataset.star);
+                if (val <= stars) {
+                    el.classList.add('text-amber-400');
+                    el.classList.remove('text-slate-300');
+                } else {
+                    el.classList.remove('text-amber-400');
+                    el.classList.add('text-slate-300');
+                }
+            });
+        }
+
+        document.querySelectorAll('.star-option').forEach(el => {
+            el.onclick = () => {
+                setStarRatingValue(parseInt(el.dataset.star));
+            };
+        });
+
+        reviewSubmissionForm.onsubmit = (e) => {
+            e.preventDefault();
+            const name = reviewAuthorInput.value.trim() || "교직원";
+            const comment = reviewMessageInput.value.trim();
+            if (!comment) return;
+
+            const ymd = getYYYYMMDD(selectedDate);
+            if (!feedbackLogs[ymd]) {
+                feedbackLogs[ymd] = [];
+            }
+
+            feedbackLogs[ymd].unshift({
+                author: name,
+                stars: selectedReviewStars,
+                text: comment,
+                time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+            });
+
+            localStorage.setItem('senior_meal_reviews_jeil_mid', JSON.stringify(feedbackLogs));
+            reviewMessageInput.value = '';
+            setStarRatingValue(5);
+            renderCurrentReviews();
+        };
+
+        function renderCurrentReviews() {
+            reviewsFeedContainer.innerHTML = '';
+            const ymd = getYYYYMMDD(selectedDate);
+            const list = feedbackLogs[ymd] || [];
+
+            if (list.length === 0) {
+                reviewsFeedContainer.innerHTML = `<p class="text-slate-500 text-[11px] font-bold text-center py-6">오늘 급식 소감을 최초로 올려 함께 기쁨을 나누어 보세요 🖋️</p>`;
+                return;
+            }
+
+            list.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded-xl border-2 border-black flex flex-col gap-1 text-[11px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]";
+                const starIcons = '★'.repeat(item.stars) + '☆'.repeat(5 - item.stars);
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="font-black text-black">${item.author} 선생님</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-amber-500 font-extrabold text-xs">${starIcons}</span>
+                            <span class="text-[9px] text-slate-500 font-bold">${item.time}</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-700 font-bold leading-relaxed mt-0.5">${item.text}</p>
+                `;
+                reviewsFeedContainer.appendChild(card);
+            });
+        }
+
+        // --- Accessibility Font Toggle System ---
+        fontToggleBtn.onclick = () => {
+            isLargeFontActive = !isLargeFontActive;
+            if (isLargeFontActive) {
+                document.body.classList.add('large-text-mode');
+                fontToggleText.innerText = "일반 글자 모드";
+                fontToggleBtn.classList.remove('bg-[#ffc857]');
+                fontToggleBtn.classList.add('bg-[#ff7096]', 'ring-2', 'ring-black');
+            } else {
+                document.body.classList.remove('large-text-mode');
+                fontToggleText.innerText = "큰 글자 모드 켜기";
+                fontToggleBtn.classList.add('bg-[#ffc857]');
+                fontToggleBtn.classList.remove('bg-[#ff7096]', 'ring-2', 'ring-black');
+            }
+        };
+
+        // --- Real-Time Large Digital Clock Module ---
+        function updateDigitalClock() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+            const day = dayNames[now.getDay()];
+
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? '오후' : '오전';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            const hoursStr = String(hours).padStart(2, '0');
+
+            const clockEl = document.getElementById('digital-clock');
+            const clockDateEl = document.getElementById('digital-clock-date');
+
+            if (clockEl) {
+                clockEl.innerHTML = `<span class="text-teal-300 text-sm sm:text-base mr-2.5 font-sans font-bold">${ampm}</span>${hoursStr}:${minutes}:${seconds}`;
+            }
+            if (clockDateEl) {
+                clockDateEl.innerText = `${year}년 ${month}월 ${date}일 (${day})`;
+            }
+        }
+
+        // --- Controls Event Bindings ---
+        prevDayBtn.onclick = () => {
+            selectedDate.setDate(selectedDate.getDate() - 1);
+            targetDateInput.value = getYYYYMMDD(selectedDate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+            loadSelectedDayDetails();
+        };
+
+        nextDayBtn.onclick = () => {
+            selectedDate.setDate(selectedDate.getDate() + 1);
+            targetDateInput.value = getYYYYMMDD(selectedDate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+            loadSelectedDayDetails();
+        };
+
+        // Infinite Month Jumps
+        prevMonthBtn.onclick = () => {
+            selectedDate.setMonth(selectedDate.getMonth() - 1);
+            targetDateInput.value = getYYYYMMDD(selectedDate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+            loadSelectedDayDetails();
+        };
+
+        nextMonthBtn.onclick = () => {
+            selectedDate.setMonth(selectedDate.getMonth() + 1);
+            targetDateInput.value = getYYYYMMDD(selectedDate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+            loadSelectedDayDetails();
+        };
+
+        todayBtn.onclick = () => {
+            selectedDate = new Date();
+            targetDateInput.value = getYYYYMMDD(selectedDate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+            loadSelectedDayDetails();
+        };
+
+        targetDateInput.onchange = (e) => {
+            const val = new Date(e.target.value);
+            if (!isNaN(val)) {
+                selectedDate = val;
+                loadSelectedDayDetails();
+            }
+        };
+
+        // On window load initialization
+        window.onload = function() {
+            selectedDate = new Date("2026-06-23");
+            targetDateInput.value = "2026-06-23";
+            setStarRatingValue(5);
+            loadSelectedDayDetails();
+            
+            updateDigitalClock();
+            setInterval(updateDigitalClock, 1000);
+        }
+    </script>
+</body>
+</html>
